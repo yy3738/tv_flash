@@ -1,0 +1,26 @@
+# Gradle
+.gradle/
+build/
+
+# 本机配置（含绝对路径），不入库
+local.properties
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 构建 / 临时输出
+captures/
+.externalNativeBuild/
+.cxx/
+*.log
+
+# 签名文件
+*.jks
+*.keystore
