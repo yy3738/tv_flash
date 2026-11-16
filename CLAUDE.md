@@ -6,7 +6,7 @@
 
 异地远程协助电视的**自用工具**：帮助者用手机（帮助端）远程操作被协助者的 Android 电视（被协助端）。核心流程：配对码配对 → 看屏幕快照 → 点按遥控电视。服务器是自建 **NAS**（配对撮合 + 数据中继）。
 
-当前仓库只有「**电视端最小验证 App**」骨架（`app/`），用于在 Android 11 模拟器上验证四条链路：无障碍开启、截图、点击注入、开机自启。
+当前仓库只有「**电视端最小验证 App**」骨架（`app/`），用于在 Android 11（API 30）的 AVD 或真机上验证四条链路：无障碍开启、截图、点击注入、开机自启。
 
 详见 [CONTEXT.md](CONTEXT.md) 词汇表与 [docs/adr/](docs/adr/) 架构决策。
 
@@ -19,10 +19,12 @@
 
 ## 构建与安装
 
-本机环境：
+开发环境（原生 Android 工具链，**不使用第三方模拟器**）：
+- **Android Studio**：安装到 `D:\Android\AndroidStudio`（安装向导中选择该空文件夹）
 - JDK：`C:\Users\JSWPC2024101201\.jdks\temurin-17.0.12`
 - Gradle：`D:\Android\gradle-8.7\bin\gradle.bat`
-- Android SDK：`D:\Android\Sdk`（已写入 `local.properties`）
+- Android SDK：`D:\Android\Sdk`（已在 `local.properties` 中指定；Android Studio 首次启动把 SDK 指向这里，复用已装的 platform/build-tools）
+- 运行目标：Android Studio 的 **AVD（API 30）** 或真机（TCL 75V68M pro / 海信）
 
 Git Bash 下构建（Windows 程序需 `MSYS_NO_PATHCONV=1`）：
 
