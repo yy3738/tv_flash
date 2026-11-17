@@ -45,7 +45,7 @@
 ```mermaid
 flowchart LR
   B["手机 / 电脑浏览器<br/>Vue 3 + Vite + Element Plus"]
-  N["NAS 服务端 (Go)<br/>HTTP + WebSocket 中继 + 静态资源"]
+  N["NAS 服务端 (Python/FastAPI)<br/>HTTP + WebSocket 中继 + 静态资源"]
   DB[("SQLite<br/>账号 / 设备 / 会话")]
   T["电视端 App (Kotlin)<br/>无障碍截图/注入 + 前台服务"]
 
@@ -59,7 +59,7 @@ flowchart LR
 | 组件 | 角色 | 职责 |
 |------|------|------|
 | Web 前端（浏览器） | 帮助端 | 登录、电视列表、会话、显示快照、发送点按/滑动/系统键 |
-| NAS 服务端（Go） | 中枢 | 登录认证、设备令牌校验、WebSocket 双向中继、快照/指令转发、会话管理、静态资源托管 |
+| NAS 服务端（Python / FastAPI） | 中枢 | 登录认证、设备令牌校验、WebSocket 双向中继、快照/指令转发、会话管理、静态资源托管 |
 | SQLite | 存储 | 账号、电视设备、会话记录 |
 | 电视端 App（Kotlin） | 被协助端 | 首次配置并常驻连 NAS；无障碍截图、注入点击、系统键 |
 
@@ -366,11 +366,11 @@ erDiagram
 
 ```mermaid
 flowchart LR
-  Caddy["Caddy (TLS 终止)"] --> App["tvflash (Go)"]
+  Caddy["Caddy (TLS 终止)"] --> App["tvflash (Python/FastAPI)"]
   App --> Vol[("data/tvflash.db")]
 ```
 
-- Go 服务单二进制；Web 构建产物用 `go:embed` 嵌入，只需一个容器；
+- Python 服务（FastAPI + uvicorn）；Web 构建产物作为静态目录由 FastAPI 托管；一个容器即可；
 - 首次启动：初始化单账号（配置或首次访问设置密码）；
 - 电视端 App 侧载 APK 到电视。
 

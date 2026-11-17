@@ -24,3 +24,13 @@ captures/
 # 签名文件
 *.jks
 *.keystore
+
+# Node / Web
+node_modules/
+
+# Python
+server/.venv/
+server/data/
+server/web_dist/
+__pycache__/
+*.pyc

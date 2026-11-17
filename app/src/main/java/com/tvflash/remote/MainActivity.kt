@@ -1,61 +1,97 @@
 package com.tvflash.remote
 
 import android.app.Activity
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 
 class MainActivity : Activity() {
 
     private lateinit var tvStatus: TextView
-    private lateinit var tvPairCode: TextView
+    private lateinit var etUrl: EditText
+    private lateinit var etToken: EditText
     private lateinit var ivPreview: ImageView
+    private val handler = Handler(Looper.getMainLooper())
+    private val ticker = object : Runnable {
+        override fun run() {
+            refreshStatus()
+            handler.postDelayed(this, 1000)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         tvStatus = findViewById(R.id.tvStatus)
-        tvPairCode = findViewById(R.id.tvPairCode)
+        etUrl = findViewById(R.id.etUrl)
+        etToken = findViewById(R.id.etToken)
         ivPreview = findViewById(R.id.ivPreview)
 
-        tvPairCode.text = "配对码：" + (100000..999999).random()
+        val prefs = getSharedPreferences(PREFS, MODE_PRIVATE)
+        etUrl.setText(prefs.getString("url", "http://127.0.0.1:8080"))
+        etToken.setText(prefs.getString("token", ""))
 
-        findViewById<Button>(R.id.btnCapture).setOnClickListener {
-            if (!ScreenCaptureService.isReady()) {
-                tvStatus.text = "无障碍状态：未开启，请先开启"
-                return@setOnClickListener
-            }
-            ScreenCaptureService.instance?.captureScreen { bmp ->
-                runOnUiThread {
-                    if (bmp != null) {
-                        ivPreview.setImageBitmap(bmp)
-                        tvStatus.text = "截图成功 ${bmp.width}x${bmp.height}"
-                    } else {
-                        tvStatus.text = "截图失败（需 Android 11 / API 30+）"
-                    }
-                }
-            }
+        findViewById<Button>(R.id.btnSave).setOnClickListener {
+            val url = etUrl.text.toString().trim()
+            val token = etToken.text.toString().trim()
+            prefs.edit().putString("url", url).putString("token", token).apply()
+            ConnectionState.text = "保存，正在连接…"
+            startKeepAlive()
         }
 
-        findViewById<Button>(R.id.btnTap).setOnClickListener {
-            val svc = ScreenCaptureService.instance
-            if (svc == null) {
-                tvStatus.text = "无障碍状态：未开启，无法注入"
-                return@setOnClickListener
-            }
-            val dm = resources.displayMetrics
-            val ok = svc.tap(dm.widthPixels / 2f, dm.heightPixels / 2f)
-            tvStatus.text = if (ok) "已发送点击（屏幕中心）" else "点击注入失败"
-        }
+        findViewById<Button>(R.id.btnSnap).setOnClickListener { localSnapshot() }
     }
 
     override fun onResume() {
         super.onResume()
-        tvStatus.text = if (ScreenCaptureService.isReady())
-            "无障碍状态：已开启"
-        else
-            "无障碍状态：未开启（去 设置 → 无障碍 开启 TV Flash）"
+        handler.post(ticker)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(ticker)
+    }
+
+    private fun refreshStatus() {
+        val acc = if (ScreenCaptureService.isReady()) "已开启" else "未开启"
+        tvStatus.text = "无障碍:$acc | " + ConnectionState.text
+    }
+
+    private fun startKeepAlive() {
+        val intent = Intent(this, KeepAliveService::class.java)
+            .setAction(KeepAliveService.ACTION_RECONNECT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+    }
+
+    private fun localSnapshot() {
+        if (!ScreenCaptureService.isReady()) {
+            tvStatus.text = "无障碍未开启"
+            return
+        }
+        ScreenCaptureService.instance?.captureScreen { bmp ->
+            runOnUiThread {
+                if (bmp != null) {
+                    ivPreview.setImageBitmap(bmp)
+                    tvStatus.text = "截图 ${bmp.width}x${bmp.height}"
+                } else {
+                    tvStatus.text = "截图失败"
+                }
+            }
+        }
+    }
+
+    companion object {
+        const val PREFS = "tvflash"
     }
 }

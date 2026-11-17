@@ -9,43 +9,43 @@
         android:id="@+id/tvStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="无障碍状态：未开启" />
+        android:textSize="16sp"
+        android:text="状态" />
 
-    <TextView
-        android:id="@+id/tvPairCode"
+    <EditText
+        android:id="@+id/etUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:textSize="28sp"
-        android:text="配对码：------" />
+        android:hint="NAS 地址，如 http://192.168.1.10:8080"
+        android:inputType="textUri" />
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/etToken"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="8dp"
+        android:hint="设备令牌"
+        android:inputType="text" />
 
-        <Button
-            android:id="@+id/btnCapture"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="截图" />
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="保存并连接" />
 
-        <Button
-            android:id="@+id/btnTap"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="测试点击" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnSnap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="本地截图测试" />
 
     <ImageView
         android:id="@+id/ivPreview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:layout_weight="1"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter" />
