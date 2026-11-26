@@ -36,6 +36,14 @@ python -m app.make_device "客厅电视"
 | WS   | `/ws/web` | 浏览器（cookie 鉴权） |
 | WS   | `/ws/tv?token=...` | 电视端（令牌鉴权） |
 
+## 测试
+
+```bash
+python test_smoke.py      # REST 冒烟（临时库，无需服务运行）
+python test_ws.py         # 中继单帧验证（需服务与电视端运行）
+python test_refresh.py    # 慢刷 10 帧压测（需服务与电视端运行）
+```
+
 ## 前端静态资源
 
 Vue 构建产物放到 `server/web_dist/`（或设 `TVFLASH_WEB`），启动后由 `/` 托管。

@@ -94,6 +94,7 @@ flowchart TB
 | 遥控 | 系统键（返回/主页/音量） | 三端 | P1 | 低 |
 | 管理 | 断开连接、设备拉黑 | Web + NAS + 电视端 | P1 | 中 |
 | 通信 | 心跳 / 断线重连 | 三端 | P0 | 中 |
+| 遥控 | 低帧率自动刷新（慢刷） | Web + 电视端 | P0 | 中 |
 
 ---
 
@@ -390,10 +391,13 @@ flowchart LR
 
 ---
 
-## 十一、后续待办
+## 十一、进展与后续待办
 
-1. 生成可编辑 `.drawio` 源图（架构图、连接时序、ER 图）→ `docs/design/diagrams/`；
-2. 电视端骨架补"首次配置 + 设备令牌 + WS 客户端"；
-3. NAS 服务端（Go）实现认证 + 中继 + SQLite；
-4. Web 前端（Vue3 + Element Plus）实现登录 / 设备列表 / 遥控页；
-5. Docker 化与部署文档。
+**已完成**：三端实现（FastAPI 服务端 / Vue3 Web / 电视端 WS 客户端）、低帧率慢刷（见 [auto-refresh-design.md](auto-refresh-design.md)）、三端断线重连、链路压测（10/10 帧、25KB/帧）。
+
+**剩余**：
+
+1. 真机验证：TCL 75V68M pro（Android 11）安装实测 —— 无障碍/自启/后台存活/4K 缩放，按 [docs/mvp-verification-checklist.md](../mvp-verification-checklist.md) 执行；
+2. 服务端 Docker 化与部署文档（NAS）；
+3. HTTPS/WSS 反代（Caddy）与公网暴露安全；
+4. 可选：hub 按设备做快照限流合并（多浏览器并发场景）。
