@@ -45,6 +45,7 @@ class ScreenCaptureService : AccessibilityService() {
                 }
 
                 override fun onFailure(errorCode: Int) {
+                    android.util.Log.e("TvFlash", "takeScreenshot failed: $errorCode")
                     callback(null)
                 }
             }
